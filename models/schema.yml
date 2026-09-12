@@ -1,0 +1,36 @@
+version: 2
+
+models:
+  - name: dim_tienda
+    columns:
+      - name: id_tienda
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_producto
+    columns:
+      - name: id_producto
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_fecha
+    columns:
+      - name: id_fecha
+        tests:
+          - unique
+          - not_null
+
+  - name: hechos_pedidos
+    columns:
+      - name: id_producto
+        tests:
+          - relationships:
+              to: ref('dim_producto')
+              field: id_producto
+      - name: id_tienda
+        tests:
+          - relationships:
+              to: ref('dim_tienda')
+              field: id_tienda
