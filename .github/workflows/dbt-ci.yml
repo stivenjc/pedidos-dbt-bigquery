@@ -22,7 +22,7 @@ jobs:
           python-version: '3.11'
 
       - name: Instalar dbt
-        run: pip install --only-binary=:all: dbt-bigquery
+        run: "pip install --only-binary=:all: dbt-bigquery"
 
       - name: Autenticar con GCP
         uses: google-github-actions/auth@v2
