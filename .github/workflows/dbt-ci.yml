@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   test-dbt-models:
     runs-on: ubuntu-latest
@@ -20,11 +24,32 @@ jobs:
       - name: Instalar dbt
         run: pip install --only-binary=:all: dbt-bigquery
 
-      # Acá va a faltar el paso de autenticación con GCP
-      # (lo que vamos a resolver después)
+      - name: Autenticar con GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: 'projects/117345918900/locations/global/workloadIdentityPools/github-pool/providers/github-provider'
+          service_account: 'airflow-runner@pedidos-dataeng.iam.gserviceaccount.com'
+
+      - name: Crear profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat <<EOF > ~/.dbt/profiles.yml
+          proyecto_pedidos:
+            outputs:
+              dev:
+                type: bigquery
+                method: oauth
+                project: pedidos-dataeng
+                dataset: pedidos
+                location: us-central1
+                threads: 4
+            target: dev
+          EOF
 
       - name: Correr dbt run
         run: dbt run
+        working-directory: ./proyecto_pedidos
 
       - name: Correr dbt test
         run: dbt test
+        working-directory: ./proyecto_pedidos
