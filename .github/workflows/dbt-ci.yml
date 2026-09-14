@@ -1,0 +1,30 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  test-dbt-models:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descargar el código del repo
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dbt
+        run: pip install --only-binary=:all: dbt-bigquery
+
+      # Acá va a faltar el paso de autenticación con GCP
+      # (lo que vamos a resolver después)
+
+      - name: Correr dbt run
+        run: dbt run
+
+      - name: Correr dbt test
+        run: dbt test
