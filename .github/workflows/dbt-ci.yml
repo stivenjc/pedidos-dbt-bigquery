@@ -48,8 +48,6 @@ jobs:
 
       - name: Correr dbt run
         run: dbt run
-        working-directory: ./proyecto_pedidos
 
       - name: Correr dbt test
         run: dbt test
-        working-directory: ./proyecto_pedidos
